@@ -1,2 +1,2 @@
-# ariel-microfolw-ml
+# ariel-microflow-ml
 Generic Tiny Machine Learning Pipeline For Ariel OS Supported Boards
