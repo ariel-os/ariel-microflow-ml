@@ -1,0 +1,26 @@
+[project]
+name = "ariel-os-tiny-ml-building-tf"
+version = "0.1.0"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "tensorflow[and-cuda]>=2.10",
+  "numpy",
+  "tensorflow-model-optimization",
+  "ipykernel",
+  "jupyter",
+  "tflite>=2.18.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[dependency-groups]
+dev = [
+    "types-tensorflow>=2.18.0.20260322",
+]
+
+

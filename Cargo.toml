@@ -1,0 +1,24 @@
+[package]
+name = "ariel-microflow-ml"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ariel-os = { path = "build/imports/ariel-os/src/ariel-os", features = ["time", "threading"] }
+ariel-os-boards = { path = "build/imports/ariel-os/src/ariel-os-boards" }
+microflow = { git = "https://github.com/matteocarnelos/microflow-rs", rev = "6d193da", default-features = false }
+nalgebra = { version = "0.32", default-features = false }
+
+[features]
+default = []
+
+lenet5qtf = []
+lenet5qtorch = []
+mobilenetv1 = []
+
+run = []
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = [
+  'cfg(context, values(any()))',
+] }

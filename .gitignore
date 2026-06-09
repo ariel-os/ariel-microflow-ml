@@ -1,0 +1,16 @@
+/target
+/build
+.gdb_history
+
+# Python (notebook envs)
+**/.venv/
+**/*.egg-info/
+**/.ipynb_checkpoints/
+
+# Generated TFLite models — produced by the training notebooks
+/models/*.tflite
+/models/*.onnx
+/models/*.mlir
+
+# Auto-downloaded datasets (Keras / torchvision fetch on first run)
+/dataset/
