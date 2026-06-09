@@ -33,7 +33,9 @@ uv run jupyter lab lenet.ipynb
 ```
 
 Run the notebook. It downloads MNIST automatically (Keras /
-torchvision cache) and writes an INT8-quantized model to `../models/`.
+torchvision cache) and writes an INT8-quantized model into `models/` at the
+repo root — exactly where `src/main.rs`'s `#[model("models/…")]` attribute
+looks for it.
 
 > Only **quantized** models are supported. The notebook uses per-tensor INT8
 > quantization, which is what MicroFlow expects.
@@ -83,25 +85,6 @@ Reference numbers on a Raspberry Pi Pico 2 W, averaged over 10 runs:
 | lenet5q     | 53        | 14                      |
 | mobilenetv1 | 3523      | 320                     |
 
-## Notebook hygiene
-
-Notebook outputs (`outputs`, `execution_count`, etc.) are stripped at commit
-time so the repo doesn't carry execution noise. Outputs stay in your **working
-tree** — only the staged copy gets cleaned.
-
-This is wired through a per-clone git filter. After cloning, run once:
-
-```
-pipx install nbstripout      # or: uv tool install nbstripout
-nbstripout --install
-```
-
-`.gitattributes` (committed) tells git to route `*.ipynb` through the
-`nbstripout` filter. If a contributor skips the install step, git just passes
-notebooks through unchanged — the filter line in `.gitattributes` requires the
-binary to be registered locally in `.git/config`, which `nbstripout --install`
-does. CI doesn't care since outputs are already stripped at commit time.
-
 ## MicroFlow op support
 
 MicroFlow only implements a subset of TFLite ops (Conv2D, DepthwiseConv2D,
@@ -111,3 +94,7 @@ pinned commit). If your model uses anything else, the build will fail at the
 
 See the upstream repo for the current list and to contribute new ops:
 <https://github.com/matteocarnelos/microflow-rs>
+
+---
+
+Notebook outputs are stripped at commit time via a `nbstripout` git filter — after cloning, run `pipx install nbstripout && nbstripout --install` once.
