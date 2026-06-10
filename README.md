@@ -1,8 +1,8 @@
 # ariel-microflow-ml
 
 Generic Tiny ML pipeline for [Ariel OS](https://ariel-os.github.io/ariel-os/)
-supported boards, using [MicroFlow](https://github.com/matteocarnelos/microflow-rs)
-as the inference engine — full Rust, `no_std`, quantized TFLite models.
+Using [MicroFlow](https://github.com/matteocarnelos/microflow-rs)
+as the inference engine for full Rust, `no_std` Ariel compatible, quantized TFLite models.
 
 Ships with two example models: **LeNet5** (MNIST digits) trained from either
 TensorFlow or PyTorch, and **MobileNetV1** (person detection) from the MicroFlow repo.
@@ -13,23 +13,18 @@ TensorFlow or PyTorch, and **MobileNetV1** (person detection) from the MicroFlow
 
 - Rust toolchain (stable + the embedded target your board needs)
 - [Ariel OS getting started](https://ariel-os.github.io/ariel-os/dev/docs/book/getting-started.html) (`laze`, `probe-rs`, etc.)
-- [uv](https://docs.astral.sh/uv/) for the Python notebooks
-
-The MicroFlow dependency is pinned to a commit on
-`matteocarnelos/microflow-rs:main` in `Cargo.toml` — no fork to clone, `cargo`
-fetches it directly.
+- [uv](https://docs.astral.sh/uv/) for the Python notebooks (env and dependences management)
 
 ## Workflow
 
 ### 1. Train and export a `.tflite`
 
 TensorFlow and PyTorch are kept in separate uv projects to avoid version conflicts.
-Pick one, then:
+Pick one(here TensorFlow for example), then:
 
 ```
 cd building_tf      # or building_torch
 uv sync
-uv run jupyter lab lenet.ipynb
 ```
 
 Run the notebook. It downloads MNIST automatically (Keras /
@@ -65,7 +60,8 @@ laze build -b rpi-pico2-w run --features lenet5qtf
 ```
 
 Stack sizes for the main thread are tuned in `src/main.rs` and
-`laze-project.yml` — MobileNetV1 in particular needs ~320 KiB.
+`laze-project.yml`.
+ MobileNetV1 in particular needs 320 KiB.
 
 ## Benchmarking
 
@@ -78,7 +74,7 @@ nm --print-size --size-sort --demangle=rust --radix=d <same path>
 
 Per-inference timing is logged at runtime (`info!` lines, averaged over 4 runs).
 
-Reference numbers on a Raspberry Pi Pico 2 W, averaged over 10 runs:
+Reference numbers on a Raspberry Pi Pico 2 W, averaged over 4 runs ; thread stack is the minimum to set:
 
 | model       | time (ms) | main thread stack (KiB) |
 |-------------|-----------|-------------------------|
@@ -88,8 +84,7 @@ Reference numbers on a Raspberry Pi Pico 2 W, averaged over 10 runs:
 ## MicroFlow op support
 
 MicroFlow only implements a subset of TFLite ops (Conv2D, DepthwiseConv2D,
-FullyConnected, AveragePool2D, Reshape, Softmax, Transpose at the time of the
-pinned commit). If your model uses anything else, the build will fail at the
+FullyConnected, AveragePool2D, Reshape, Softmax, Transpose at the current day ). If your model uses anything else, the build will fail at the
 `#[model(...)]` macro with an "unimplemented operator" message.
 
 See the upstream repo for the current list and to contribute new ops:
