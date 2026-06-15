@@ -1,13 +1,8 @@
-# ariel-microflow-ml
+# Ariel OS Machine Learning with Microflow
 
-Generic Tiny ML pipeline for [Ariel OS](https://ariel-os.github.io/ariel-os/)
-Using [MicroFlow](https://github.com/matteocarnelos/microflow-rs)
-as the inference engine for full Rust, `no_std` Ariel compatible, quantized TFLite models.
-
-Ships with two example models: **LeNet5** (MNIST digits) trained from either
-TensorFlow or PyTorch, and **MobileNetV1** (person detection) from the MicroFlow repo.
-
-- MicroFlow paper: <https://arxiv.org/pdf/2409.19432>
+This repository provides a generic Tiny ML pipeline for [Ariel OS](https://ariel-os.github.io/ariel-os/)
+using [MicroFlow](https://github.com/matteocarnelos/microflow-rs)
+as the inference engine for full Rust, `no_std` Ariel OS compatible, quantized TFLite or PyTorch models.
 
 ## Prerequisites
 
@@ -45,7 +40,9 @@ weights so MicroFlow can consume it.
 laze build -b <ariel-board-id> run --features <model-feature>
 ```
 
-Available model features (pick exactly one):
+The code in the repo provides two example models: **LeNet5** (MNIST digits) trained from either
+TensorFlow or PyTorch, and **MobileNetV1** (person detection) from the MicroFlow repo.
+In practice, pick one model features out of the following list:
 
 | feature        | model                                                      |
 |----------------|------------------------------------------------------------|
@@ -53,7 +50,7 @@ Available model features (pick exactly one):
 | `lenet5qtorch` | LeNet5 trained with PyTorch (`models/lenet5_quantized_torch.tflite`)    |
 | `mobilenetv1`  | Person detection (`models_provided/mobilenetv1.tflite`)                 |
 
-Example, on a Raspberry Pi Pico 2 W:
+For example, on a Raspberry Pi Pico 2 W for LeNet5:
 
 ```
 laze build -b rpi-pico2-w run --features lenet5qtf
@@ -61,7 +58,7 @@ laze build -b rpi-pico2-w run --features lenet5qtf
 
 Stack sizes for the main thread are tuned in `src/main.rs` and
 `laze-project.yml`.
- MobileNetV1 in particular needs 320 KiB.
+Note that MobileNetV1 in particular needs a large stack (320 KiB).
 
 ## Benchmarking
 
@@ -81,7 +78,10 @@ Reference numbers on a Raspberry Pi Pico 2 W, averaged over 4 runs ; thread stac
 | lenet5q     | 53        | 14                      |
 | mobilenetv1 | 3523      | 320                     |
 
-## MicroFlow op support
+
+## Remarks & Next steps
+
+### MicroFlow op support
 
 MicroFlow only implements a subset of TFLite ops (Conv2D, DepthwiseConv2D,
 FullyConnected, AveragePool2D, Reshape, Softmax, Transpose at the current day ). If your model uses anything else, the build will fail at the
@@ -90,6 +90,16 @@ FullyConnected, AveragePool2D, Reshape, Softmax, Transpose at the current day ).
 See the upstream repo for the current list and to contribute new ops:
 <https://github.com/matteocarnelos/microflow-rs>
 
----
+### Notebook outputs
 
 Notebook outputs are stripped at commit time via a `nbstripout` git filter — after cloning, run `pipx install nbstripout && nbstripout --install` once.
+
+---
+---
+
+## Further reading
+
+For more information on Microflow, you can read this paper 
+[M. Carnelos, F Pasti, N Bellotto, "MicroFlow: An Efficient Rust-Based Inference Engine for TinyML," Elsevier Internet of Things, 2025](https://arxiv.org/pdf/2409.19432). 
+
+For more information on Ariel OS, your can read this other paper [E. Frank et al. "Ariel OS: An Embedded Rust Operating System for Networked Sensors & Multi-Core Microcontrollers", IEEE DCOSS-IoT, 2025](https://arxiv.org/pdf/2504.19662).
